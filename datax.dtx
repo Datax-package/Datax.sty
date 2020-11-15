@@ -1,0 +1,149 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2020 by David Gustavsson
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3 of this license or (at your option) any later
+% version. The latest version of this license is in:
+%
+% http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2005/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}[2020/11/15]
+%<package>\ProvidesPackage{datax}
+%<package>	[2020/11/15 v1.0 data import into LaTeX]
+%<package>\RequirePackage{pgfkeys}
+%<package>\RequirePackage{pgfopts}
+%<package>\ProcessPgfPackageOptions{/packageoptions}
+%
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{datax}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+\DocInput{datax.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+%\CheckSum{14}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+% \changes{v1.0}{2020/11/15}{Initial version}
+%
+% \GetFileInfo{datax.sty}
+% \DoNotIndex{}
+%
+% \title{The \textsf{datax} package\thanks{This document 
+%     corresponds to \textsf{datax}~\fileversion,
+%     dated~\filedate.}}
+% \author{David Gustavsson \texttt{david.e.gustavsson@gmail.com}}
+%
+% \maketitle
+%
+% \section{Motivation}
+% \textsf{datax} allows you to export data from your scripts, and import them as \textsf{siunitx} commands.
+% This is analogous to how the author uses \textsf{graphicx} to programmatically generate graphics and include
+% in a document.
+%
+% \section{Installation}
+% Place |datax.sty| in a place where \LaTeX{} can find it (often |~/texmf/tex/latex/datax/datax.sty|). Run |texhash| if needed. 
+%
+% \section{Usage}
+% The package is loaded with |\usepackage[dataxfile=|\meta{data.tex}|]{datax}|, which reads the file specified as
+% \meta{dataxfile}.
+%
+% \DescribeMacro{\datax}
+% From then on data can be inserted as |\datax|\marg{tag}. If the file |data.tex| contains references
+% to a string \(s\), a number \(x\) and a physical constant \(c\), then the macro produces this output:
+%
+% \begin{center}
+%     \begin{tabular}{rl}\toprule
+%         Input & Output \\\midrule
+%         |\datax{s}| & \datax{s} \\
+%         |\datax{x}| & \datax{x} \\
+%         |\datax{c}| & \datax{c} \\
+%         |\datax{undefined}| & \datax{undefined} \\
+%         \bottomrule
+%     \end{tabular}
+% \end{center}
+%
+% \section{Interactions}
+% Technically, \textsf{datax} only needs a data file consisting of a number of assignments:
+%
+% |\pgfkeyssetvalue{/datax/|\meta{tag}|}{|\meta{value}|}|
+%
+% but of course the entire point of the package is automation. For this, you need an interaction plugin for your script
+% language. If your language is not listed below, you might need to write this plugin for yourself, or request it.
+% \begin{center}
+% \begin{tabular}{rlp{5cm}}\toprule
+% Language & Plugin & Comments\\\midrule
+% |julia| & \href{htts://github.com/Datax-package/Datax.jl}{Datax.jl} & By the current author \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% \StopEventually{\PrintIndex}
+% \section{Implementation}
+% 
+%    \begin{macrocode}
+\pgfkeys{ %
+	/packageoptions/.cd, %
+	dataxfile/.store in = \dataxfile, %
+	dataxfile = data.tex, %
+}
+
+\pgfkeys{ %
+	/datax/.is family, datax, %
+	.unknown/.code={ %
+		\pgfkeyssetvalue{ %
+			\pgfkeyscurrentpath/\pgfkeyscurrentname %
+			}{ %
+			#1 %
+		} %
+	}, %
+}
+
+\input{\dataxfile}
+%    \end{macrocode}
+% \begin{macro}{\datax}
+% Include datum from the specified data file.
+%    \begin{macrocode}
+\newcommand{\datax}[1]{
+	\pgfkeysifdefined{/datax/#1}{ %
+		\pgfkeysvalueof{/datax/#1} %
+		}{ %
+		\PackageWarning{datax}{Data value `#1' undefined }\textbf{??} %
+	} %
+}
+%    \end{macrocode}
+% \end{macro}
+% \Finale
+\endinput
