@@ -1,8 +1,11 @@
+datax/*
 datax.pdf
 README.html
 datax.zip
 datax.glo
 datax.idx
+datax.sty
+data.tex
 *.log
 *.aux
 *.out

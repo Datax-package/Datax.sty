@@ -24,11 +24,17 @@
 %
 %
 %<*driver>
+\begin{filecontents}{data.tex}
+	\pgfkeyssetvalue{/datax/s}{A literal string}
+	\pgfkeyssetvalue{/datax/x}{\num{2.4}}
+	\pgfkeyssetvalue{/datax/c}{\SI{3e8}{\meter\per\second}}
+\end{filecontents}
 \documentclass{ltxdoc}
 \usepackage{datax}
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
+
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -38,7 +44,7 @@
 %</driver>
 % \fi
 %
-%\CheckSum{14}
+%\CheckSum{16}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -132,7 +138,7 @@
 	}, %
 }
 
-\input{\dataxfile}
+\InputIfFileExists{\dataxfile}{}{\PackageWarning{Cannot read file `\dataxfile' }}
 %    \end{macrocode}
 % \begin{macro}{\datax}
 % Include datum from the specified data file.
