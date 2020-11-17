@@ -1,5 +1,5 @@
 # The datax package
-A LaTeX package to insert data from a script in a document. Interacting plugins available at [Github](https://github.com/Datax-package).
+A LaTeX package to insert data from a script in a document. Interacting plugins available at [Github, Datax-package](https://github.com/Datax-package).
 
 ## Example usage
 Julia script:
@@ -17,7 +17,7 @@ The calculated length was \(a=\datax{a}\).
 ```
 
 ## Copyright and license
-Copyright 2020 David Gustavsson
+Copyright 2020 David Gustavsson (david.e.gustavsson@gmail.com)
 
 This package may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either
