@@ -17,20 +17,18 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 %<package>\ProvidesPackage{datax}
-%<package>	[2020/11/16 v1.1 data import into LaTeX]
+%<package>	[2020/11/17 v1.1 data import into LaTeX]
 %<package>\RequirePackage{pgfkeys}
 %<package>\RequirePackage{pgfopts}
-%<package>\ProcessPgfPackageOptions{/packageoptions}
-%
 %
 %<*driver>
-\begin{filecontents}{data.tex}
+\begin{filecontents}{datax-example-data.tex}
 	\pgfkeyssetvalue{/datax/s}{A literal string}
 	\pgfkeyssetvalue{/datax/x}{\num{2.4}}
 	\pgfkeyssetvalue{/datax/c}{\SI{3e8}{\meter\per\second}}
 \end{filecontents}
 \documentclass{ltxdoc}
-\usepackage{datax}
+\usepackage[dataxfile=datax-example-data.tex]{datax}
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
@@ -44,7 +42,7 @@
 %</driver>
 % \fi
 %
-%\CheckSum{16}
+%\CheckSum{19}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -103,9 +101,7 @@
 %
 % \section{Interactions}
 % Technically, \textsf{datax} only needs a data file consisting of a number of assignments:
-%
 % |\pgfkeyssetvalue{/datax/|\meta{tag}|}{|\meta{value}|}|
-%
 % but of course the entire point of the package is automation. For this, you need an interaction plugin for your script
 % language. If your language is not listed below, you might need to write this plugin for yourself, or request it.
 % \begin{center}
@@ -122,10 +118,9 @@
 % 
 %    \begin{macrocode}
 \pgfkeys{ %
-	/packageoptions/.cd, %
-	dataxfile/.store in = \dataxfile, %
-	dataxfile = data.tex, %
+	/packageoptions/dataxfile/.initial=data.tex, %
 }
+\ProcessPgfPackageOptions{/packageoptions}
 
 \pgfkeys{ %
 	/datax/.is family, datax, %
@@ -138,7 +133,12 @@
 	}, %
 }
 
-\InputIfFileExists{\dataxfile}{}{\PackageWarning{Cannot read file `\dataxfile' }}
+\def\dataxfile{./\pgfkeysvalueof{/packageoptions/dataxfile}}
+\InputIfFileExists{%
+	\dataxfile
+	}{}{
+	\PackageWarning{datax}{Cannot read file `\dataxfile'}
+}
 %    \end{macrocode}
 % \begin{macro}{\datax}
 % Include datum from the specified data file.
@@ -147,7 +147,7 @@
 	\pgfkeysifdefined{/datax/#1}{ %
 		\pgfkeysvalueof{/datax/#1} %
 		}{ %
-		\PackageWarning{datax}{Data value `#1' undefined }\textbf{??} %
+		\PackageWarning{datax}{Data value `#1' undefined}\textbf{??} %
 	} %
 }
 %    \end{macrocode}
