@@ -16,6 +16,16 @@ LaTeX document
 The calculated length was \(a=\datax{a}\).
 ```
 
+## Supported languages
+
+Language | Repo | Maintainer
+----- | ----- | -----
+Julia | [Datax.jl](https://github.com/Datax-package/Datax.jl) | David Gustavsson
+MATLAB | [Datax.m](https://github.com/Datax-package/Datax.m) | David Gustavsson
+
+Extending it to your language of choice should be fairly simple, just make it so your script can write `\pgfkeyssetvalue{/datax/<tag>}{<value>}` to a file.
+If you end up writing a plugin for a language, or if you want to request one, please make a feature request or send me an e-mail.
+
 ## Copyright and license
 Copyright 2020 David Gustavsson (david.e.gustavsson@gmail.com)
 
@@ -28,3 +38,4 @@ http://www.latex-project.org/lppl.txt
 
 and version 1.3 or later is part of all distributions of
 LaTeX version 2005/12/01 or later.
+
