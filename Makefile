@@ -15,7 +15,7 @@ datax.sty : datax.ins datax.dtx
 	pdflatex -file-line-error $<
 
 README.html: README.md
-	md2html $< > $@
+	md2html --github $< > $@
 
 clean :
 	$(RM) -rd datax
