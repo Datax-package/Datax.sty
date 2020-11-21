@@ -4,7 +4,7 @@ A LaTeX package to insert data from a script in a document. Interacting plugins 
 ## Example usage
 Julia script:
 ```julia
-using Datax
+using LaTeXDatax
 # ... later ...
 @datax a b c
 ```
@@ -20,7 +20,7 @@ The calculated length was \(a=\datax{a}\).
 
 Language | Repo | Maintainer
 ----- | ----- | -----
-Julia | [Datax.jl](https://github.com/Datax-package/Datax.jl) | David Gustavsson
+Julia | [LaTeXDatax.jl](https://github.com/Datax-package/LaTeXDatax.jl) | David Gustavsson
 MATLAB | [Datax.m](https://github.com/Datax-package/Datax.m) | David Gustavsson
 
 Extending it to your language of choice should be fairly simple, just make it so your script can write `\pgfkeyssetvalue{/datax/<tag>}{<value>}` to a file.
