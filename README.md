@@ -22,6 +22,7 @@ Language | Repo | Maintainer
 ----- | ----- | -----
 Julia | [LaTeXDatax.jl](https://github.com/Datax-package/LaTeXDatax.jl) | David Gustavsson
 MATLAB | [Datax.m](https://github.com/Datax-package/Datax.m) | David Gustavsson
+Python | [LaTeXDatax.py](https://github.com/Datax-package/LaTeXDatax.py) | David Gustavsson
 
 Extending it to your language of choice should be fairly simple, just make it so your script can write `\pgfkeyssetvalue{/datax/<tag>}{<value>}` to a file.
 If you end up writing a plugin for a language, or if you want to request one, please make a feature request or send me an e-mail.
