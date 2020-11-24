@@ -4,16 +4,21 @@ A LaTeX package to insert data from a script in a document. Interacting plugins 
 ## Example usage
 Julia script:
 ```julia
-using LaTeXDatax
-# ... later ...
+using LaTeXDatax, Unitful
+a = 25u"m"
+b = 13
+c = "Literal string"
 @datax a b c
 ```
 
 LaTeX document
 ```tex
+\documentclass{article}
 \usepackage{datax}
-% ... later ...
+\usepackage{siunitx}
+\begin{document}
 The calculated length was \(a=\datax{a}\).
+\end{document}
 ```
 
 ## Supported languages
@@ -21,9 +26,10 @@ The calculated length was \(a=\datax{a}\).
 Language | Repo | Maintainer
 ----- | ----- | -----
 Julia | [LaTeXDatax.jl](https://github.com/Datax-package/LaTeXDatax.jl) | David Gustavsson
-MATLAB | [Datax.m](https://github.com/Datax-package/Datax.m) | David Gustavsson
+MATLAB | [LaTeXDatax.m](https://github.com/Datax-package/Datax.m) | David Gustavsson
 Python | [LaTeXDatax.py](https://github.com/Datax-package/LaTeXDatax.py) | David Gustavsson
 
+If your language isn't listed above, check [the super-repo](https://github.com/Datax-package).
 Extending it to your language of choice should be fairly simple, just make it so your script can write `\pgfkeyssetvalue{/datax/<tag>}{<value>}` to a file.
 If you end up writing a plugin for a language, or if you want to request one, please make a feature request or send me an e-mail.
 
