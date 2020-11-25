@@ -17,21 +17,39 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 %<package>\ProvidesPackage{datax}
-%<package>	[2020/11/17 v1.2 data import into LaTeX]
+%<package>      [2020/11/17 v1.2 data import into LaTeX]
 %<package>\RequirePackage{pgfkeys}
 %<package>\RequirePackage{pgfopts}
 %
 %<*driver>
-\begin{filecontents}{datax-example-data.tex}
-	\pgfkeyssetvalue{/datax/s}{A literal string}
-	\pgfkeyssetvalue{/datax/x}{\num{2.4}}
-	\pgfkeyssetvalue{/datax/c}{\SI{3e8}{\meter\per\second}}
+\begin{filecontents}[overwrite]{datax-example-data.tex}
+        \pgfkeyssetvalue{/datax/s}{A literal string}
+        \pgfkeyssetvalue{/datax/x}{\num{2.4}}
+        \pgfkeyssetvalue{/datax/c}{\SI{3e8}{\meter\per\second}}
 \end{filecontents}
+\begin{filecontents*}[overwrite]{datax-example-script.jl}
+        #!julia
+        using LaTeXDatax, Unitful
+
+        s = "A literal string";
+        x = 2.4;
+        c = 3e8u"m/s";
+
+        @datax s x c
+\end{filecontents*}
 \documentclass{ltxdoc}
 \usepackage[dataxfile=datax-example-data.tex]{datax}
 \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{microtype}
+
+\newfloat{lstfloat}{htbp}{lop}
+\floatname{lstfloat}{Listing}
+\def\lstfloatautorefname{Listing}
 
 \EnableCrossrefs
 \CodelineIndex
@@ -67,30 +85,53 @@
 % \GetFileInfo{datax.sty}
 % \DoNotIndex{}
 %
-% \title{The \textsf{datax} package\thanks{This document 
-%     corresponds to \textsf{datax}~\fileversion,
-%     dated~\filedate.}}
-% \author{David Gustavsson \texttt{david.e.gustavsson@gmail.com}}
+% \title{The \textsf{datax} package\thanks{This document corresponds to
+% \textsf{datax}~\fileversion, dated~\filedate.}} \author{David Gustavsson
+% \href{mailto:david.e.gustavsson@gmail.com}{\texttt{david.e.gustavsson@gmail.com}}}
 %
-% \maketitle
+% \maketitle {\centering\input{datax-logo.tikz}\\}
 %
 % \section{Motivation}
-% \textsf{datax} allows you to export data from your scripts, and import them as \textsf{siunitx} commands.
-% This is analogous to how the author uses \textsf{graphicx} to programmatically generate graphics and include
-% in a document.
+% \textsf{datax} allows you to export data from your scripts, and import them
+% as literal strings or \textsf{siunitx} commands. If the scripts or the data
+% on which they operate change, the printed data will update as well. This is
+% analogous to how the author uses \textsf{graphicx} to programmatically
+% generate graphics and include in a document.
+%
+% An alternative is to simply print |\def|s, which scales poorly (but is
+% similar to how this package works under the hood).  Or using something like
+% \textsf{csvread}, which seems overkill for individual data points, and can be
+% quite difficult to index into.
+%
+% \textsf{datax} is intended to work as an extension of your variable name
+% space from scripts to your document: you should simply be able to call your
+% variables by the same name in \LaTeX{} as in your scripts.
 %
 % \section{Installation}
-% Place |datax.sty| in a place where \LaTeX{} can find it (often |~/texmf/tex/latex/datax/datax.sty|). Run |texhash| if needed. 
+% If you have a \LaTeX{} package manager, like texlive or miktex, use it to
+% download the package from ctan.  Otherwise, download the repository and place
+% |datax.sty| in a place where \LaTeX{} can find it (often
+% |~/texmf/tex/latex/datax/datax.sty|). Run |texhash| if needed.
 %
 % \section{Usage}
-% The package is loaded with |\usepackage[dataxfile=|\meta{data.tex}|]{datax}|, which reads the file specified as
-% \meta{dataxfile}.
+% The package is loaded with |\usepackage[dataxfile=|\meta{data.tex}|]{datax}|,
+% which reads the file specified as \meta{dataxfile}.  From then on data can be
+% inserted as |\datax|\marg{tag}\DescribeMacro{\datax}. If, for instance, the
+% file |data.tex| contains references to a string \(s\), a number \(x\) and a
+% physical constant \(c\), then the macro produces the output in
+% table~\ref{tab:outputs}.
 %
-% \DescribeMacro{\datax}
-% From then on data can be inserted as |\datax|\marg{tag}. If the file |data.tex| contains references
-% to a string \(s\), a number \(x\) and a physical constant \(c\), then the macro produces this output:
+% I highly recommend using \textsf{siunitx} (in general, but with
+% \textsf{datax} in particular).  It is of course possible to use the literal
+% string function to circumvent siunitx and make \textsf{datax} print numbers
+% without |\num| and |\SI|, which is why \textsf{siunitx} is not loaded as a
+% prerequisite, but I have deliberately chosen to use these commands per
+% default when printing numbers and quantities because it looks much better.
 %
-% \begin{center}
+% \begin{table}
+%     \centering
+%     \caption{Outputs from the \texttt{\textbackslash{}datax}
+%     command}\label{tab:outputs}
 %     \begin{tabular}{rl}\toprule
 %         Input & Output \\\midrule
 %         |\datax{s}| & \datax{s} \\
@@ -99,59 +140,79 @@
 %         |\datax{undefined}| & \datax{undefined} \\
 %         \bottomrule
 %     \end{tabular}
-% \end{center}
+% \end{table}
 %
 % \section{Interactions}
-% Technically, \textsf{datax} only needs a data file consisting of a number of assignments:
-% |\pgfkeyssetvalue{/datax/|\meta{tag}|}{|\meta{value}|}|
-% but of course the entire point of the package is automation. For this, you need an interaction plugin for your script
-% language. If your language is not listed below, you might need to write this plugin for yourself, or request it.
-% \begin{center}
+% Technically, \textsf{datax} only needs a data file consisting of a number of
+% assignments: |\pgfkeyssetvalue{/datax/|\meta{tag}|}{|\meta{value}|}| but of
+% course the entire point of the package is automation. For this, you need an
+% interaction plugin for your script language. If your language is not listed
+% in table~\ref{tab:plugins}, you might need to write this plugin for yourself,
+% or request it.
+%
+% Installation instructions and usage documentation is available at the
+% respective repositories. In general these plugins are installed using the
+% language's default plugin manager.
+%
+% \begin{table}
+% \centering
+% \caption{Implemented language plugins}\label{tab:plugins}
 % \begin{tabular}{rlp{5cm}}\toprule
 % Language & Plugin & Comments\\\midrule
 % |julia| & \href{https://github.com/Datax-package/LaTeXDatax.jl}{LaTeXDatax.jl} & By the present author \\
 % |Matlab| & \href{https://github.com/Datax-package/LaTeXDatax.m}{LaTeXDatax.m} & By the present author \\
-% |Python| & \href{https://github.com/Datax-package/LaTeXDatax.py}{LaTeXDatax.py} & By the present author (whose Python is not great) \\
+% |Python| & \href{https://github.com/Datax-package/LaTeXDatax.py}{LaTeXDatax.py} & By the present author \\
 % \bottomrule
 % \end{tabular}
-% \end{center}
+% \end{table}
+%
+% Taking julia as an example, the variables in table~\ref{tab:outputs} could
+% have been generated with the script in listing~\ref{list:julia}.
+
+% \begin{lstfloat}
+% \lstinputlisting[label=list:julia,caption={Example julia script to generate the outputs in table~\ref{tab:outputs}},
+%                         language=python,frame=single,xleftmargin=.2\textwidth,xrightmargin=.2\textwidth]{datax-example-script.jl}
+% \end{lstfloat}
+%
 %
 % \StopEventually{\PrintIndex}
 % \section{Implementation}
-% 
+% Default data file name: \texttt{data.tex}
 %    \begin{macrocode}
-\pgfkeys{ %
-	/packageoptions/dataxfile/.initial=data.tex, %
-}
+\pgfkeys{ /packageoptions/dataxfile/.initial=data.tex, }
+%    \end{macrocode}
+% Read any given options into family \texttt{/packageoptions/}. Then introduce
+% family \texttt{/datax/} where all the variables will be stored.
+%    \begin{macrocode}
 \ProcessPgfPackageOptions{/packageoptions}
 
-\pgfkeys{ %
-	/datax/.is family, datax, %
-	.unknown/.code={ %
-		\pgfkeyssetvalue{ %
-			\pgfkeyscurrentpath/\pgfkeyscurrentname %
-			}{ %
-			#1 %
-		} %
-	}, %
+\pgfkeys{ /datax/.is family, datax, %
+        .unknown/.code={ \pgfkeyssetvalue{ %
+                        \pgfkeyscurrentpath/\pgfkeyscurrentname %
+        }{ #1 } },
 }
 
+%    \end{macrocode}
+% If data file exists, source it (storing all the variables in
+% \texttt{/datax/}). Otherwise, throw a warning.
+%    \begin{macrocode}
 \def\dataxfile{./\pgfkeysvalueof{/packageoptions/dataxfile}}
 \InputIfFileExists{%
-	\dataxfile
-	}{}{
-	\PackageWarning{datax}{Cannot read file `\dataxfile'}
+        \dataxfile
+        }{}{
+        \PackageWarning{datax}{Cannot read file `\dataxfile'}
 }
 %    \end{macrocode}
 % \begin{macro}{\datax}
-% Include datum from the specified data file.
+% Include datum. If the supplied tag is unused, print bold question marks (like
+% |\ref|), and throw a warning.
 %    \begin{macrocode}
 \newcommand{\datax}[1]{
-	\pgfkeysifdefined{/datax/#1}{ %
-		\pgfkeysvalueof{/datax/#1} %
-		}{ %
-		\PackageWarning{datax}{Data value `#1' undefined}\textbf{??} %
-	} %
+        \pgfkeysifdefined{/datax/#1}{ %
+                \pgfkeysvalueof{/datax/#1} %
+                }{ %
+                \PackageWarning{datax}{Data value `#1' undefined}\textbf{??} %
+        } %
 }
 %    \end{macrocode}
 % \end{macro}
