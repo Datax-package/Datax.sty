@@ -9,3 +9,6 @@ datax.sty
 *.log
 *.aux
 *.out
+datax-example-script.jl
+datax-logo.pdf
+datax-logo.png

@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+	\definecolor{variablecolor}{named}{cyan}
+	\draw (-2,-2) rectangle (2,2);
+
+	%  Script {{{
+	\begin{scope}[shift={(-0.5,1.25)}]
+		\node[draw=black,rounded corners=5] (code) at (0,0) {\texttt{> {\color{variablecolor}x} = 0.025;}};
+	\end{scope}
+	%  }}}
+
+	%  Document {{{
+	\begin{scope}[shift={(1,-0.75)}, scale=1.25]
+		\draw (0.2,0.705) -| (-0.5,-0.705) -| (0.5,0.405) -- cycle;
+		\draw[line width=2] (-0.4,0.5) -- (0.2,0.5);
+		\draw[thick] %
+		(-0.4,0.3) -- (0.4,0.3) %
+		(-0.4,0.1) -- (0.4,0.1) %
+		(-0.4,-0.1) -- (0.4,-0.1) %
+		(-0.4,-0.3) -- node[inner sep=1.5,circle,midway,variablecolor,draw=black,fill=white](variable) {\(x\)} (0.4,-0.3) %
+		(-0.4,-0.5) -- (0.4,-0.5) %
+		;
+	\end{scope}
+	%  }}}
+
+	\draw[thick,-stealth, shorten >=10, variablecolor] (code.-160) |- (variable);
+
+\end{tikzpicture}
