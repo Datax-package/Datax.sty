@@ -1,4 +1,4 @@
-# The datax package <img src=datax-logo.png width=50x>
+# The datax package
 A LaTeX package to insert data from a script in a document. Interacting plugins available at [Github, Datax-package](https://github.com/Datax-package).
 
 ## Example usage
