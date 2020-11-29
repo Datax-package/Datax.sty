@@ -27,5 +27,5 @@ datax-logo.png : datax-logo.pdf
 
 clean :
 	$(RM) -rd datax
-	$(RM) datax.zip *.pdf *.log *.aux *.out *.glo *.idx *.sty *.html datax-example-data.tex
+	$(RM) datax.zip *.log *.aux *.out *.glo *.idx *.sty *.html datax-example-data.tex
 	$(RM) datax-logo.pdf data.tex datax-example-script.jl
