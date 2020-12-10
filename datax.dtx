@@ -60,7 +60,7 @@
 %</driver>
 % \fi
 %
-%\CheckSum{19}
+%\CheckSum{29}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -180,6 +180,7 @@
 % Default data file name: \texttt{data.tex}
 %    \begin{macrocode}
 \pgfkeys{ /packageoptions/dataxfile/.initial=data.tex, }
+\pgfkeys{ /packageoptions/siunitxoptions/.initial={}, }
 %    \end{macrocode}
 % Read any given options into family \texttt{/packageoptions/}. Then introduce
 % family \texttt{/datax/} where all the variables will be stored.
@@ -202,16 +203,23 @@
         }{}{
         \PackageWarning{datax}{Cannot read file `\dataxfile'}
 }
+\newif\ifhassiunitx
+\@ifpackageloaded{siunitx}{\hassiunitxtrue}{\hassiunitxfalse} 
 %    \end{macrocode}
 % \begin{macro}{\datax}
 % Include datum. If the supplied tag is unused, print bold question marks (like
 % |\ref|), and throw a warning.
 %    \begin{macrocode}
-\newcommand{\datax}[1]{
-        \pgfkeysifdefined{/datax/#1}{ %
-                \pgfkeysvalueof{/datax/#1} %
+\newcommand{\datax}[2][]{
+        \pgfkeysifdefined{/datax/#2}{ %
+                { %
+                        \ifhassiunitx %
+                                \sisetup{\pgfkeysvalueof{/packageoptions/siunitxoptions},#1}
+                        \fi
+                        \pgfkeysvalueof{/datax/#2} %
+                } %
                 }{ %
-                \PackageWarning{datax}{Data value `#1' undefined}\textbf{??} %
+                \PackageWarning{datax}{Data value `#2' undefined}\textbf{??} %
         } %
 }
 %    \end{macrocode}
