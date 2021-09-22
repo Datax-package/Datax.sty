@@ -34,7 +34,7 @@ Extending it to your language of choice should be fairly simple, just make it so
 If you end up writing a plugin for a language, or if you want to request one, please make a feature request or send me an e-mail.
 
 ## Copyright and license
-Copyright 2020 David Gustavsson (david.e.gustavsson@gmail.com)
+Copyright 2020 − 2021 David Gustavsson (david.e.gustavsson@gmail.com)
 
 This package may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either
