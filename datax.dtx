@@ -17,7 +17,7 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 %<package>\ProvidesPackage{datax}
-%<package>      [2020/11/29 v1.1.1 data import into LaTeX]
+%<package>      [2021-09-22 v1.1.2 data import into LaTeX]
 %<package>\RequirePackage{pgfkeys}
 %<package>\RequirePackage{pgfopts}
 %
@@ -81,6 +81,7 @@
 % \changes{v1.0}{2020/11/15}{Initial version}
 % \changes{v1.1}{2020/11/17}{Polishing for release}
 % \changes{v1.1.1}{2020/11/29}{Renaming the plugins, adding Python support}
+% \changes{v1.1.2}{2021-09-22}{Removing excessive spaces}
 %
 % \GetFileInfo{datax.sty}
 % \DoNotIndex{}
@@ -187,10 +188,10 @@
 %    \begin{macrocode}
 \ProcessPgfPackageOptions{/packageoptions}
 
-\pgfkeys{ /datax/.is family, datax, %
-        .unknown/.code={ \pgfkeyssetvalue{ %
-                        \pgfkeyscurrentpath/\pgfkeyscurrentname %
-        }{ #1 } },
+\pgfkeys{ /datax/.is family, datax,%
+        .unknown/.code={ \pgfkeyssetvalue{%
+                        \pgfkeyscurrentpath/\pgfkeyscurrentname%
+        }{ #1 } },%
 }
 
 %    \end{macrocode}
@@ -210,17 +211,17 @@
 % Include datum. If the supplied tag is unused, print bold question marks (like
 % |\ref|), and throw a warning.
 %    \begin{macrocode}
-\newcommand{\datax}[2][]{
-        \pgfkeysifdefined{/datax/#2}{ %
-                { %
-                        \ifhassiunitx %
-                                \sisetup{\pgfkeysvalueof{/packageoptions/siunitxoptions},#1}
-                        \fi
-                        \pgfkeysvalueof{/datax/#2} %
-                } %
-                }{ %
-                \PackageWarning{datax}{Data value `#2' undefined}\textbf{??} %
-        } %
+\newcommand{\datax}[2][]{%
+        \pgfkeysifdefined{/datax/#2}{%
+                {%
+                        \ifhassiunitx%
+                                \sisetup{\pgfkeysvalueof{/packageoptions/siunitxoptions},#1}%
+                        \fi%
+                        \pgfkeysvalueof{/datax/#2}%
+                }%
+                }{%
+                \PackageWarning{datax}{Data value `#2' undefined}\textbf{??}%
+        }%
 }
 %    \end{macrocode}
 % \end{macro}
