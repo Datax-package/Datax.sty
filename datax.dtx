@@ -17,7 +17,7 @@
 % \iffalse
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 %<package>\ProvidesPackage{datax}
-%<package>      [2021-09-22 v1.1.2 data import into LaTeX]
+%<package>      [2022-01-27 v1.2.0 data import into LaTeX]
 %<package>\RequirePackage{pgfkeys}
 %<package>\RequirePackage{pgfopts}
 %
@@ -60,7 +60,7 @@
 %</driver>
 % \fi
 %
-%\CheckSum{29}
+%\CheckSum{21}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -82,6 +82,7 @@
 % \changes{v1.1}{2020/11/17}{Polishing for release}
 % \changes{v1.1.1}{2020/11/29}{Renaming the plugins, adding Python support}
 % \changes{v1.1.2}{2021-09-22}{Removing excessive spaces}
+% \changes{v1.2.0}{2022-01-27}{Removing package wide siunitx options}
 %
 % \GetFileInfo{datax.sty}
 % \DoNotIndex{}
@@ -181,7 +182,6 @@
 % Default data file name: \texttt{data.tex}
 %    \begin{macrocode}
 \pgfkeys{ /packageoptions/dataxfile/.initial=data.tex, }
-\pgfkeys{ /packageoptions/siunitxoptions/.initial={}, }
 %    \end{macrocode}
 % Read any given options into family \texttt{/packageoptions/}. Then introduce
 % family \texttt{/datax/} where all the variables will be stored.
@@ -204,8 +204,6 @@
         }{}{
         \PackageWarning{datax}{Cannot read file `\dataxfile'}
 }
-\newif\ifhassiunitx
-\@ifpackageloaded{siunitx}{\hassiunitxtrue}{\hassiunitxfalse} 
 %    \end{macrocode}
 % \begin{macro}{\datax}
 % Include datum. If the supplied tag is unused, print bold question marks (like
@@ -214,9 +212,9 @@
 \newcommand{\datax}[2][]{%
         \pgfkeysifdefined{/datax/#2}{%
                 {%
-                        \ifhassiunitx%
-                                \sisetup{\pgfkeysvalueof{/packageoptions/siunitxoptions},#1}%
-                        \fi%
+                        \@ifpackageloaded{siunitx}{%
+                                \sisetup{#1}%
+                        }{}%
                         \pgfkeysvalueof{/datax/#2}%
                 }%
                 }{%
