@@ -39,7 +39,7 @@ plugin for a language, or if you want to request one, please make a feature
 request or send me an e-mail.
 
 ## Copyright and license
-Copyright 2020 − 2022 David Gustavsson (david.e.gustavsson@gmail.com)
+Copyright 2020 − 2024 David Gustavsson (david.e.gustavsson@gmail.com)
 
 This package may be distributed and/or modified under the conditions of the
 LaTeX Project Public License, either version 1.3 of this license or (at your
